@@ -93,6 +93,22 @@ export const appRouter = [
             }
         }, ]
     },
+     {
+        path: '/article',
+        icon: 'android-lock',
+        name: 'article',
+        title: '文章管理',
+        component: Main,
+        children: [{
+            path: 'article-publish',
+            title: '发布文章',
+            icon: 'android-lock',
+            name: 'article-publish',
+            component: resolve => {
+                require(['./views/article-publish/article-publish.vue'], resolve);
+            }
+        }]
+    },
  ];
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [

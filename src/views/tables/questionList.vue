@@ -56,10 +56,10 @@
             @on-cancel="editModal = false">
             <Form :label-width="50">
                  <FormItem label="标题" prop="name">
-                    <Input  :value="currentQ.title" placeholder="请输入标题"></Input>
+                    <Input  :value="currentQ.title" class="current_title" placeholder="请输入标题"></Input>
                 </FormItem>
                 <FormItem label="类型" prop="mail">
-                    <Input  :value="currentQ.type" placeholder="请输入类型"></Input>
+                    <Input  :value="currentQ.type" class="current_type" placeholder="请输入类型"></Input>
                 </FormItem>
                <Card  :padding="10" style="margin:10px;">
                     <Row slot="title">
@@ -124,7 +124,7 @@ export default {
                 page:page||this.currentPage,
                 size:this.pageCnt,
             }
-            const res = await this.Api.get('/rs/question', data)
+            const res = await this.Api.get('/rs/question?order=asc', data)
             if(res.data.records){
                this.totalPage = res.data.records*1
                this.dataRows = res.data.rows
@@ -151,8 +151,22 @@ export default {
         },
         async editConfirm(){
             let qid = this.currentQ.id
-            let data = {}
-            const res = await this.Api.delete("/rs/question/"+this.currentQ.id,data)
+            let title = document.querySelector('.current_title input').value
+            let type = document.querySelector('.current_type input').value
+            let keynodes = document.querySelectorAll('.answer_key input')
+            let valuenodes = document.querySelectorAll('.answer_value input')
+            let answers_json = []
+            for(let i = 0 ;i < keynodes.length ;i++){
+                let obj = {}
+                obj[keynodes[i].value] = valuenodes[i].value
+                answers_json.push(obj)
+            }
+            let data = {
+                title:title,
+                type:type,
+                answers_json:answers_json
+            }
+            const res = await this.Api.put("/rs/question/"+this.currentQ.id,data)
             if(res.data.info){
                 this.$Message.info('修改成功')
                 //删除成功以后重新渲染
